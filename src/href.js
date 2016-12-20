@@ -14,13 +14,9 @@ var Href = (function ()
         }
         if(url.charAt(url.length-1) == '/')
         {
-            url += '?';
+            url = url.substr(0,url.length-1);
         }
-        else
-        {
-            url += '/?';
-        }
-        window.location.href = url + arr.join('&');
+        window.location.href = url + '?' + arr.join('&');
     }
     //post方式超链接
     function post(url,data)
