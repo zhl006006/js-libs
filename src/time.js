@@ -23,7 +23,7 @@ var Time = (function ()
         // 监听请求状态变化
         xhr.onreadystatechange = function()
         {
-            if(xhr.readyState===2)
+            if(xhr.readyState==2)
             {
                 _syncTime = new Date().getTime();
                 // 获取响应头里的时间戳
