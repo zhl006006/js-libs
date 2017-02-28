@@ -1,7 +1,7 @@
 /**
  * Created by tb on 2017/1/7.
  */
-var Time = (function ()
+var Timer = (function ()
 {
     var _syncTime = 0;
     var _serverTime = 0;
