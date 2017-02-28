@@ -2,7 +2,7 @@
  * url功能
  * Created by tb on 2017/2/16.
  */
-var URLUtil = (function ()
+var URL = (function ()
 {
     var o = {};
     o.getQuery = function(url)
