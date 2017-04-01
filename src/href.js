@@ -12,9 +12,9 @@ var Href = (function ()
         {
             arr.push(name + '=' + data[name]);
         }
-        if(url.charAt(url.length-1) == '/')
+        if(url.charAt(url.length-1) === '/')
         {
-            url = url.substr(0,url.length-1);
+            url = url.substr(0, url.length-1);
         }
         window.location.href = url + '?' + arr.join('&');
     }
@@ -24,18 +24,18 @@ var Href = (function ()
         var form = document.createElement('form');
         form.method = 'post';
         form.action = url;
-        form.style.display='none';
-        if (data != null)
+        form.style.display = 'none';
+        if (data)
         {
             for(var name in data)
             {
-                createInput(form,name,data[name]);
+                createInput(form, name, data[name]);
             }
         }
         form.submit();
     }
     //创建form隐藏的数据项
-    function createInput(form,name,value)
+    function createInput(form, name, value)
     {
         var input = document.createElement("input");
         input.type = 'hidden';
@@ -43,5 +43,5 @@ var Href = (function ()
         input.value = value;
         form.appendChild(input);
     }
-    return {get:get,post:post};
+    return {get:get, post:post};
 })();
