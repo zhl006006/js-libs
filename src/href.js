@@ -5,7 +5,7 @@
 var Href = (function ()
 {
     //get方式超链接
-    function get(url,data)
+    function get(url, data)
     {
         var arr = [];
         for(var name in data)
