@@ -24,16 +24,16 @@ exports.deleteDirectory = function(path, delCurrent)
         var files = FS.readdirSync(path);
         files.forEach(function(file, index)
         {
-            var curPath = Path.join(path, file);
-            if(FS.statSync(curPath).isDirectory())
+            var currentPath = Path.join(path, file);
+            if(FS.statSync(currentPath).isDirectory())
             {
-                exports.deleteDirectory(curPath, true);
+                exports.deleteDirectory(currentPath, true);
             }
             else
             {
-                FS.unlinkSync(curPath);
+                FS.unlinkSync(currentPath);
             }
-        });
+        }, this);
         if(delCurrent === true)
         {
             FS.rmdirSync(path);
@@ -63,18 +63,47 @@ exports.deleteFile = function(file)
     }
 };
 /**
- * 删除指定路径下所有指定后缀名的文件
+ * 删除指定路径下所有指定名或后缀名的文件
+ * path:指定路径
+ * nameOrSuffix：文件全名或后缀名
+ * allDirectories：是否包括所有子目录下的文件
  */
-exports.deleteFiles = function(dir, suffix)
+exports.deleteFiles = function(path, nameOrSuffix, allDirectories)
 {
-    var files = FS.readdirSync(dir);
-    for(var i in files)
+    if(FS.existsSync(path))
     {
-        var file = files[i];
-        if(!suffix || Path.extname(file) == suffix)
-        {
-            exports.deleteFile(Path.join(dir, file));
-        }
+        var files = FS.readdirSync(path);
+        files.forEach(function(file, index) {
+            var currentPath = Path.join(path, file);
+            if(FS.statSync(currentPath).isDirectory())
+            {
+                if(allDirectories === true)
+                {
+                    exports.deleteFiles(currentPath, nameOrSuffix, allDirectories);
+                }
+            }
+            else
+            {
+                if(!nameOrSuffix)
+                {
+                    FS.unlinkSync(currentPath);
+                }
+                else if(nameOrSuffix.indexOf('.') === 0)
+                {
+                    if(Path.extname(file) == nameOrSuffix)
+                    {
+                        FS.unlinkSync(currentPath);
+                    }
+                }
+                else
+                {
+                    if(file == nameOrSuffix)
+                    {
+                        FS.unlinkSync(currentPath);
+                    }
+                }
+            }
+        }, this);
     }
 };
 /**
@@ -117,5 +146,123 @@ exports.mergeObjectTo = function(from, to)
     for(var i in from)
     {
         to[i] = from[i];
+    }
+};
+/**
+ * 抽取语言
+ */
+exports.extractLang = function(paths, suffixs, filterPaths, filterKeywords, origLangs)
+{
+    if(!suffixs)
+    {
+        return null;
+    }
+    //
+    var regex_content = new RegExp('[\"\']((?![\"\']).)+[\"\']','g');//抽取引号中的内容
+    var regex_lang = new RegExp('[\u4e00-\u9fa5]','g');//过滤出中文内容
+    var regex_remove = new RegExp('[\\t\\0\\v]', 'g');//去掉杂七杂八的字符
+    var regex_line = new RegExp('[\\r\\n]', 'g');//换行裁剪成数组
+    //
+    var langArray = [];
+    var pathList = [];
+    paths.forEach(function(path) {
+        refAllFilePath(path, suffixs, pathList);
+    }, this);
+    for(var a in pathList)
+    {
+        var path = pathList[a];
+        if(isFilterPaths(path, filterPaths) == false)
+        {
+            var lineList = FS.readFileSync(path).toString().split(regex_line);
+            for(var b in lineList)
+            {
+                var line = lineList[b].trim().replace(regex_remove, '');
+                if(isFilterKeywords(line, filterKeywords) == false)
+                {
+                    var array = line.match(regex_content);
+                    for(var c in array)
+                    {
+                        var lang = array[c].substring(1, array[c].length-1);
+                        if(regex_lang.test(lang))
+                        {
+                            var obj = getLangObject(origLangs, lang);
+                            if(!obj)
+                            {
+                                obj = {k:lang,v:''};
+                            }
+                            langArray.push(obj);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return langArray;
+};
+function getLangObject(langArray, key)
+{
+    if(langArray)
+    {
+        for(var i in langArray)
+        {
+            var o = langArray[i];
+            if(o.k == key)
+            {
+                return o;
+            }
+        }
+    }
+    return null;
+}
+function isFilterPaths(path, filters)
+{
+    if(filters)
+    {
+        path = path.replace(/\\/g,'/');
+        for(var i in filters)
+        {
+            var item = filters[i].replace(/\\/g,'/');
+            if(path.indexOf(item) >= 0)
+            {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+function isFilterKeywords(line, filters)
+{
+    if(filters)
+    {
+        for(var i in filters)
+        {
+            if(line.indexOf(filters[i]) == 0)
+            {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+function refAllFilePath (path, suffixs, list)
+{
+    if(FS.existsSync(path))
+    {
+        var files = FS.readdirSync(path);
+        files.forEach(function(file)
+        {
+            var currentPath = Path.join(path, file);
+            if(FS.statSync(currentPath).isDirectory())
+            {
+                refAllFilePath(currentPath, suffixs, list);
+            }
+            else
+            {
+                if(suffixs.indexOf(Path.extname(currentPath)) >= 0)
+                {
+                    list.push(currentPath);
+                }
+            }
+        }, this);
     }
 };
