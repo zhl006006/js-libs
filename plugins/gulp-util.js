@@ -149,6 +149,15 @@ exports.mergeObjectTo = function(from, to)
     }
 };
 /**
+ * 获取path下所有子级文件路径添加到list并返回
+ */
+exports.refAllFilePath = function(path, suffixs)
+{
+    var list = [];
+    _refAllFilePath(path, suffixs, list);
+    return list;
+}
+/**
  * 抽取语言
  */
 exports.extractLang = function(paths, suffixs, filterPaths, filterKeywords, origLangs)
@@ -166,18 +175,18 @@ exports.extractLang = function(paths, suffixs, filterPaths, filterKeywords, orig
     var langArray = [];
     var pathList = [];
     paths.forEach(function(path) {
-        refAllFilePath(path, suffixs, pathList);
+        _refAllFilePath(path, suffixs, pathList);
     }, this);
     for(var a in pathList)
     {
         var path = pathList[a];
-        if(isFilterPaths(path, filterPaths) == false)
+        if(_isFilterPaths(path, filterPaths) == false)
         {
             var lineList = FS.readFileSync(path).toString().split(regex_line);
             for(var b in lineList)
             {
                 var line = lineList[b].trim().replace(regex_remove, '');
-                if(isFilterKeywords(line, filterKeywords) == false)
+                if(_isFilterKeywords(line, filterKeywords) == false)
                 {
                     var array = line.match(regex_content);
                     for(var c in array)
@@ -185,7 +194,7 @@ exports.extractLang = function(paths, suffixs, filterPaths, filterKeywords, orig
                         var lang = array[c].substring(1, array[c].length-1);
                         if(regex_lang.test(lang))
                         {
-                            var obj = getLangObject(origLangs, lang);
+                            var obj = _getLangObject(origLangs, lang);
                             if(!obj)
                             {
                                 obj = {k:lang,v:''};
@@ -199,7 +208,7 @@ exports.extractLang = function(paths, suffixs, filterPaths, filterKeywords, orig
     }
     return langArray;
 };
-function getLangObject(langArray, key)
+function _getLangObject(langArray, key)
 {
     if(langArray)
     {
@@ -214,7 +223,7 @@ function getLangObject(langArray, key)
     }
     return null;
 }
-function isFilterPaths(path, filters)
+function _isFilterPaths(path, filters)
 {
     if(filters)
     {
@@ -230,7 +239,7 @@ function isFilterPaths(path, filters)
     }
     return false;
 }
-function isFilterKeywords(line, filters)
+function _isFilterKeywords(line, filters)
 {
     if(filters)
     {
@@ -244,7 +253,7 @@ function isFilterKeywords(line, filters)
     }
     return false;
 }
-function refAllFilePath (path, suffixs, list)
+function _refAllFilePath (path, suffixs, list)
 {
     if(FS.existsSync(path))
     {
@@ -254,11 +263,11 @@ function refAllFilePath (path, suffixs, list)
             var currentPath = Path.join(path, file);
             if(FS.statSync(currentPath).isDirectory())
             {
-                refAllFilePath(currentPath, suffixs, list);
+                _refAllFilePath(currentPath, suffixs, list);
             }
             else
             {
-                if(suffixs.indexOf(Path.extname(currentPath)) >= 0)
+                if(suffixs == null || suffixs.indexOf(Path.extname(currentPath)) >= 0)
                 {
                     list.push(currentPath);
                 }
