@@ -1,4 +1,6 @@
-const GulpUtil = require('gulp-util');
+const FS = require("fs");
+const Path = require('path');
+const GulpUtil = require(__dirname+'/gulp-util');
 /**
  * 抽取语言
  */
