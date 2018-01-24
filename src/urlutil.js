@@ -10,24 +10,23 @@ var URLUtil = (function ()
      * @param url
      * @returns {object}
      */
-    o.getQuery = function(url)
+    o.getQueryMap = function(url)
     {
+        var map = {};
         if(typeof url !== 'string')
         {
-            return null;
+            return map;
         }
-        var query=url.match(/[^\?]+\?([^#]*)/,'$1');
-        if(!query || !query[1])
+        var index = url.indexOf("?");
+        if (index >= 0)
         {
-            return null;
-        }
-        var kv=query[1].split('&');
-        var map={};
-        for(var i=0,len=kv.length;i<len;i++)
-        {
-            var result=kv[i].split('=');
-            var key=result[0],value=result[1];
-            map[key]=value ||(typeof value==='string'?null:true);
+            url = url.substring(index+1);
+            var strs = url.split("&");
+            for(var i = 0; i < strs.length; i++)
+            {
+                var item = strs[i].split("=");
+                map[item[0]] = item[1] == null ? '' : item[1];
+            }
         }
         return map;
     };
