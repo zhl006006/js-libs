@@ -1,7 +1,7 @@
 const FS = require("fs");
 const Path = require('path');
 /**
- * 获取命令行输入参数
+ * 获取命令行输入的一个参数
  */
 exports.getProcessArgs = function()
 {
@@ -11,6 +11,18 @@ exports.getProcessArgs = function()
         return args.substr(1);
     }
     return null;
+};
+/**
+ * 获取命令行输入的参数列表
+ */
+exports.getProcessArgsList = function()
+{
+    var list = [];
+    for(var i = 3;i<process.argv.length;i++)
+    {
+        list.push(process.argv[i].substr(1));
+    }
+    return list;
 };
 /**
  * 删除目录和所有子文件目录
