@@ -55,6 +55,32 @@ exports.deleteDirectory = function(path, delCurrent)
     return false;
 };
 /**
+ * 删除列表中的目录和所有子文件目录
+ * success:删除成功回调
+ * fail:删除失败回调
+ */
+exports.deleteDirectoryList = function (list, success, fail)
+{
+    for(var i in list)
+    {
+        var path = list[i];
+        if(exports.deleteDirectory(path, true))
+        {
+            if(success)
+            {
+                success(path);
+            }
+        }
+        else
+        {
+            if(fail)
+            {
+                fail(path);
+            }
+        }
+    }
+}
+/**
  * 创建目录
  */
 exports.createDirectory = function(path)
