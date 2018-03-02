@@ -223,3 +223,28 @@ exports.refAllFilePath = function (path, suffixs, list)
         }, this);
     }
 };
+/**
+ * 复制src目录下的文件到out目录,suffixs为空则复制所有文件
+ */
+exports.copyFiles = function(srcPath, outPath, suffixs)
+{
+    if(FS.existsSync(srcPath))
+    {
+        var files = FS.readdirSync(srcPath);
+        files.forEach(function(file)
+        {
+            var currentPath = Path.join(srcPath, file);
+            if(suffixs == null || suffixs.indexOf(Path.extname(currentPath)) >= 0)
+            {
+                var readable = FS.createReadStream(currentPath);
+                var writable = FS.createWriteStream(Path.join(outPath,file)); 
+                readable.pipe(writable);
+            }
+        }, this);
+        console.log('文件复制完成');
+    }
+    else
+    {
+        console.log('源目录不存在:'+srcPath);
+    }
+}
