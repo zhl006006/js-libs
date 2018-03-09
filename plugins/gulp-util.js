@@ -248,3 +248,41 @@ exports.copyFiles = function(srcPath, outPath, suffixs)
         console.log('源目录不存在:'+srcPath);
     }
 }
+exports.zipFiles = function(srcPath, outPath, suffixs)
+{
+    if(FS.existsSync(srcPath))
+    {
+        console.log('正在压缩:' + srcPath + ' ' + suffixs);
+        const Yazl = require("yazl");
+        const NodeJsonMinify = require('node-json-minify');
+        var zipfile = new Yazl.ZipFile();
+        var files = FS.readdirSync(srcPath);
+        files.forEach(function(file, index)
+        {
+            var filepath = Path.join(srcPath, file);
+            var stat = FS.statSync(filepath);
+            var extname = Path.extname(filepath);
+            if(stat.isFile && (suffixs == null || suffixs.indexOf(extname) >= 0))
+            {
+                var options = {mtime:stat.mtime,mode:stat.mode};
+                if(extname == '.json')
+                {
+                    var text = FS.readFileSync(filepath).toString();
+                    zipfile.addBuffer(new Buffer(NodeJsonMinify(text)), Path.basename(filepath), options);
+                }
+                else
+                {
+                    zipfile.addFile(filepath, Path.basename(filepath), options);
+                }
+            }
+        }, this);
+        zipfile.outputStream.pipe(FS.createWriteStream(outPath)).on("close", function() {
+            console.log('压缩完成:' + outPath);
+        });
+        zipfile.end();
+    }
+    else
+    {
+        console.log('目录不存在:' + srcPath);
+    }
+}
