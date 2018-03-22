@@ -1,5 +1,5 @@
 /**
- * Created by tb on 2017/2/28.
+ * @version 1.0.0
  */
 var Validate = (function ()
 {

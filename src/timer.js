@@ -1,4 +1,5 @@
 /**
+ * @version 1.0.0
  * Created by tb on 2017/1/7.
  */
 var Timer = (function ()

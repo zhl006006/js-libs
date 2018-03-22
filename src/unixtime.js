@@ -1,5 +1,5 @@
 /**
- * Created by tb on 2017/1/12.
+ * @version 1.0.0
  */
 var UnixTime = (function ()
 {

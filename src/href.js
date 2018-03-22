@@ -1,5 +1,6 @@
 /**
  * 超链接，支持get和post，参数直接传对象
+ * @version 1.0.1
  * Created by tb on 2016/12/15.
  */
 var Href = (function ()
@@ -32,7 +33,9 @@ var Href = (function ()
                 createInput(form, name, data[name]);
             }
         }
+        document.body.appendChild(form);
         form.submit();
+        document.body.removeChild(form);
     }
     //创建form隐藏的数据项
     function createInput(form, name, value)

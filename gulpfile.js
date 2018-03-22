@@ -1,14 +1,49 @@
 const Gulp = require('gulp');
+const GulpUglify = require('gulp-uglify');
+const GulpConcat = require('gulp-concat');
 const GulpUtil = require('./plugins/gulp-util');
-Gulp.task('default',function()
+//
+const DistPath = './dist';
+
+Gulp.task('utils', function()
 {
-    const DistPath = './dist';
-    //
-    GulpUtil.deleteDirectory(DistPath);
-    //js 合并 压缩
-    const Uglify=require('gulp-uglify');
-    const Concat = require('gulp-concat');
-    const Rename = require("gulp-rename");
-    Gulp.src('src/*.js').pipe(Uglify()).pipe(Rename({suffix:".min"})).pipe(Gulp.dest(DistPath));
-    Gulp.src('src/*.js').pipe(Concat('utils.min.js')).pipe(Uglify()).pipe(Gulp.dest(DistPath));
+    var version = GulpUtil.getProcessArgs();
+    if(version == null)
+    {
+        throw new Error('版本号不能为空');
+    }
+    var fileName = 'utils-' + version + '.min.js';
+    Gulp.src('src/*.js').pipe(GulpConcat(fileName)).pipe(GulpUglify()).pipe(Gulp.dest(DistPath));
+    console.log('输出完成：' + fileName);
+});
+function parseJsFile(name)
+{
+    var version = GulpUtil.getProcessArgs();
+    if(version == null)
+    {
+        throw new Error('版本号不能为空');
+    }
+    var fileName = name + '-' + version + '.min.js';
+    Gulp.src('src/' + name + '.js').pipe(GulpConcat(fileName)).pipe(GulpUglify()).pipe(Gulp.dest(DistPath));
+    console.log('输出完成：' + fileName);
+}
+Gulp.task('href', function()
+{
+    parseJsFile('href');
+});
+Gulp.task('timer', function()
+{
+    parseJsFile('timer');
+});
+Gulp.task('unixtime', function()
+{
+    parseJsFile('unixtime');
+});
+Gulp.task('urlutil', function()
+{
+    parseJsFile('urlutil');
+});
+Gulp.task('validate', function()
+{
+    parseJsFile('validate');
 });
