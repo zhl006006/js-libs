@@ -47,8 +47,11 @@ exports.addResFilesToResJson = function(fileList, resObj)
             let obj = JSON.parse(FS.readFileSync(filePath).toString());
             if(obj.file && obj.frames)
             {
-                sheetList.push(Path.dirname(fileUrl) + '/' + obj.file);
-                sheetSubKeysMap[fileUrl] = Object.getOwnPropertyNames(obj.frames).join(',');
+                if(FS.existsSync(Path.join(Path.dirname(filePath),obj.file)))
+                {
+                    sheetList.push(Path.dirname(fileUrl) + '/' + obj.file);
+                    sheetSubKeysMap[fileUrl] = Object.getOwnPropertyNames(obj.frames).join(',');
+                }
             }
         }
     }
