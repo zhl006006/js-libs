@@ -1,6 +1,6 @@
 /**
  * url功能
- * @version 1.0.0
+ * Created by tb on 2017/2/16.
  */
 var URLUtil = (function ()
 {

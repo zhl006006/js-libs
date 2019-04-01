@@ -1,5 +1,5 @@
 /**
- * @version 1.0.0
+ * Created by tb on 2017/2/28.
  */
 var Validate = (function ()
 {
@@ -186,7 +186,7 @@ var Validate = (function ()
         {
             return true;
         }
-        if(o.isNullOrEmpty(str) === false && new RegExp(/^((13|15)+\d{9})$/).test(str))
+        if(o.isNullOrEmpty(str) === false && new RegExp(/^1[3456789]{1}\d{9}$/).test(str))
         {
             return true;
         }
@@ -251,12 +251,12 @@ var Validate = (function ()
         return false;
     };
     /**
-     * 开始日期时间是否小于结束日期时间(秒)
+     * 日期时间范围是否正确(开始日期时间是否小于结束日期时间(秒))
      * @param start
      * @param end
      * @return {boolean}
      */
-    o.isDateTimeStartToEnd = function (start, end)
+    o.isDateTimeRange = function (start, end)
     {
         if(o.isNullOrEmpty(start) || o.isNullOrEmpty(end))
         {

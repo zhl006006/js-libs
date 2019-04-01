@@ -1,5 +1,5 @@
 /**
- * @version 1.0.0
+ * Created by tb on 2017/1/12.
  */
 var UnixTime = (function ()
 {
@@ -27,6 +27,13 @@ var UnixTime = (function ()
     }
     //
     var o = {};
+    o.FORMAT_yyyyMMdd_hhmmss = 'yyyy-MM-dd hh:mm:ss';
+    o.FORMAT_yyyyMMdd_hhmm = 'yyyy-MM-dd hh:mm';
+    o.FORMAT_yyyyMMdd = 'yyyy-MM-dd';
+    o.FORMAT_yyyyMM = 'yyyy-MM';
+    o.FORMAT_hhmmss = 'hh:mm:ss';
+    o.FORMAT_hhmm = 'hh:mm';
+
     /**
      * 把Date对象格式化为yyyy-MM-dd h:m:s格式的日期时间
      * @param date
@@ -41,7 +48,7 @@ var UnixTime = (function ()
         }
         if(!format)
         {
-            format = 'yyyy-MM-dd hh:mm:ss';
+            format = o.FORMAT_yyyyMMdd_hhmmss;
         }
         var tpl = {
             'M+': date.getMonth() + 1,
@@ -72,6 +79,15 @@ var UnixTime = (function ()
         return baseDateFormat(date, format, tpl);
     };
     /**
+     * 返回前后指定日开始的时间戳，默认今天
+     * @param day
+     * @returns {number}
+     */
+    o.toDayStartTimestamp = function (day)
+    {
+        return o.toTimestamp(o.toDayStart(day));
+    };
+    /**
      * 返回前后指定日结束的日期时间，默认今天
      * @param day
      * @returns {string}
@@ -89,7 +105,16 @@ var UnixTime = (function ()
         return baseDateFormat(date, format, tpl);
     };
     /**
-     * 把时间戳（秒）格式化为yyyy-MM-dd h:m:s格式的日期时间
+     * 返回前后指定日结束的时间戳，默认今天
+     * @param day
+     * @returns {number}
+     */
+    o.toDayEndTimestamp = function (day)
+    {
+        return o.toTimestamp(o.toDayEnd(day));
+    };
+    /**
+     * 把时间戳（秒）格式化为yyyy-MM-dd hh:mm:ss格式的日期时间
      * @param timestamp
      * @param format
      * @returns {string}
@@ -101,7 +126,16 @@ var UnixTime = (function ()
         return o.formatDate(date, format);
     };
     /**
-     * 把yyyy-MM-dd h:m:s格式的日期时间转为时间戳(秒)
+     * 把时间戳（秒）格式化为yyyy-MM-dd hh:mm格式的日期时间(没有秒显示)
+     * @param timestamp
+     * @returns {string}
+     */
+    o.formatTimestampNoSecond = function (timestamp)
+    {
+        return o.formatTimestamp(timestamp, o.FORMAT_yyyyMMdd_hhmm);
+    };
+    /**
+     * 把yyyy-MM-dd hh:mm:ss格式的日期时间转为时间戳(秒)
      * @param unixTime
      * @returns {number}
      */
@@ -109,8 +143,7 @@ var UnixTime = (function ()
     {
         if(typeof unixTime === 'string')
         {
-            var date = new Date(unixTime);
-            return parseInt(Date.parse(date)/1000);
+            return parseInt(Date.parse(new Date(unixTime))/1000);
         }
         else
         {
