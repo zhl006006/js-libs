@@ -141,14 +141,7 @@ var UnixTime = (function ()
      */
     o.toTimestamp = function (unixTime)
     {
-        if(typeof unixTime === 'string')
-        {
-            return parseInt(Date.parse(new Date(unixTime))/1000);
-        }
-        else
-        {
-            return parseInt(Date.now()/1000);
-        }
+        return parseInt(unixTime ? Date.parse(new Date(unixTime))/1000 : Date.now()/1000);
     };
     return o;
 })();
