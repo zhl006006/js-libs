@@ -122,7 +122,7 @@ var UnixTime = (function ()
     o.formatTimestamp = function (timestamp, format)
     {
         var date = new Date();
-        date.setTime(timestamp * 1000);
+        date.setTime(timestamp ? timestamp * 1000 : Date.now());
         return o.formatDate(date, format);
     };
     /**
