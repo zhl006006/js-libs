@@ -1,5 +1,5 @@
-# js-utils
-javascript实用工具库
+# js-libs
+javascript库
 <br/>
 <br/>
 <br/>
